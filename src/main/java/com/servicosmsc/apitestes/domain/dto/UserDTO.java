@@ -1,10 +1,14 @@
 package com.servicosmsc.apitestes.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class UserDTO {
 	
 	private Integer id;
 	private String nome;
 	private String email;
+	
+	@JsonIgnore
 	private String senha;
 	
 	public UserDTO() {}
