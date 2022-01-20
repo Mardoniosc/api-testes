@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -74,15 +75,17 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	void create(Integer id) {
-	}
-	
-	@Test
-	void update(Integer id) {
-	}
-	
-	@Test
-	void delete(Integer id) {
+	void quandoBuscarTodosRetorneUmaListaDeUsuarios() {
+		when(repository.findAll()).thenReturn(List.of(user));
+		
+		List<User> response = service.findAll();	
+		
+		assertNotNull(response);
+		assertEquals(1, response.size());
+		assertEquals(User.class, response.get(0).getClass());
+		assertEquals(ID, response.get(0).getId());
+		assertEquals(NOME, response.get(0).getNome());
+		assertEquals(EMAIL, response.get(0).getEmail());
 	}
 	
 	private void startUser() {
