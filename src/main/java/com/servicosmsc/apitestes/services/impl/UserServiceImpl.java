@@ -11,6 +11,7 @@ import com.servicosmsc.apitestes.domain.User;
 import com.servicosmsc.apitestes.domain.dto.UserDTO;
 import com.servicosmsc.apitestes.repositories.UserRepository;
 import com.servicosmsc.apitestes.services.UserService;
+import com.servicosmsc.apitestes.services.exceptions.DataIntegrityException;
 import com.servicosmsc.apitestes.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -35,7 +36,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User create(UserDTO obj) {
+		findByEmail(obj);
 		return repository.save(mappeer.map(obj, User.class));
+	}
+	
+	private void findByEmail(UserDTO obj) {
+		Optional<User> user = repository.findByEmail(obj.getEmail());
+		
+		if(user.isPresent()) {
+			throw new DataIntegrityException("E-mail já cadastrado na base!");
+		}
 	}
 
 }
