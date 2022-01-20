@@ -27,6 +27,7 @@ import com.servicosmsc.apitestes.services.exceptions.ObjectNotFoundException;
 @SpringBootTest
 public class UserServiceImplTest {
 
+	private static final String E_MAIL_JA_CADASTRADO_NA_BASE = "E-mail já cadastrado na base!";
 	private static final Integer ID   = 1;
 	private static final String NOME  = "Mardonio";
 	private static final String EMAIL = "Mardonio@live.com";
@@ -113,7 +114,7 @@ public class UserServiceImplTest {
 			service.create(userDTO);			
 		} catch (Exception e) {
 			assertEquals(DataIntegrityException.class, e.getClass());
-			assertEquals("E-mail já cadastrado na base!", e.getMessage());
+			assertEquals(E_MAIL_JA_CADASTRADO_NA_BASE, e.getMessage());
 		}
 		
 	}
@@ -129,6 +130,20 @@ public class UserServiceImplTest {
 		assertEquals(ID, response.getId());
 		assertEquals(NOME, response.getNome());
 		assertEquals(EMAIL, response.getEmail());
+	}
+	
+	@Test
+	void quandoAtualizarRetorneErroDeIntegridadeBancoDeDados() {
+		when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+		
+		try {
+			optionalUser.get().setId(2);
+			service.update(userDTO);			
+		} catch (Exception e) {
+			assertEquals(DataIntegrityException.class, e.getClass());
+			assertEquals(E_MAIL_JA_CADASTRADO_NA_BASE, e.getMessage());
+		}
+		
 	}
 	
 	
