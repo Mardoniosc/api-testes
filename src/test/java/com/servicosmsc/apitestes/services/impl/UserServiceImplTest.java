@@ -2,6 +2,7 @@ package com.servicosmsc.apitestes.services.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -86,6 +87,19 @@ public class UserServiceImplTest {
 		assertEquals(ID, response.get(0).getId());
 		assertEquals(NOME, response.get(0).getNome());
 		assertEquals(EMAIL, response.get(0).getEmail());
+	}
+	
+	@Test
+	void quandoCriarRetorneSucesso() {
+		when(repository.save(any())).thenReturn(user);
+		
+		User response = service.create(userDTO);
+		
+		assertNotNull(response);
+		assertEquals(User.class, response.getClass());
+		assertEquals(ID, response.getId());
+		assertEquals(NOME, response.getNome());
+		assertEquals(EMAIL, response.getEmail());
 	}
 	
 	private void startUser() {
