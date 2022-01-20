@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.servicosmsc.apitestes.domain.User;
 import com.servicosmsc.apitestes.domain.dto.UserDTO;
 import com.servicosmsc.apitestes.repositories.UserRepository;
+import com.servicosmsc.apitestes.services.exceptions.DataIntegrityException;
 import com.servicosmsc.apitestes.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
@@ -101,6 +103,21 @@ public class UserServiceImplTest {
 		assertEquals(NOME, response.getNome());
 		assertEquals(EMAIL, response.getEmail());
 	}
+	
+	@Test
+	void quandoCriarRetorneErroDeIntegridadeBancoDeDados() {
+		when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+		
+		try {
+			optionalUser.get().setId(2);
+			service.create(userDTO);			
+		} catch (Exception e) {
+			assertEquals(DataIntegrityException.class, e.getClass());
+			assertEquals("E-mail já cadastrado na base!", e.getMessage());
+		}
+		
+	}
+	
 	
 	private void startUser() {
 		user = new User(ID, NOME, EMAIL, SENHA);
