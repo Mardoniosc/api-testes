@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
 	private UserRepository repository;
 	
 	@Autowired
-	private ModelMapper mappeer;
+	private ModelMapper mapper;
 	
 	@Override
 	public User findById(Integer id) {
@@ -37,15 +37,21 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User create(UserDTO obj) {
 		findByEmail(obj);
-		return repository.save(mappeer.map(obj, User.class));
+		return repository.save(mapper.map(obj, User.class));
 	}
 	
 	private void findByEmail(UserDTO obj) {
 		Optional<User> user = repository.findByEmail(obj.getEmail());
 		
-		if(user.isPresent()) {
+		if(user.isPresent() && !user.get().getId().equals(obj.getId())) {
 			throw new DataIntegrityException("E-mail já cadastrado na base!");
 		}
+	}
+
+	@Override
+	public User update(UserDTO obj) {
+		findByEmail(obj);
+		return repository.save(mapper.map(obj, User.class));
 	}
 
 }
