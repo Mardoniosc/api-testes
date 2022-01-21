@@ -30,6 +30,7 @@ import com.servicosmsc.apitestes.services.exceptions.ObjectNotFoundException;
 @SpringBootTest
 public class UserServiceImplTest {
 
+	private static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
 	private static final String E_MAIL_JA_CADASTRADO_NA_BASE = "E-mail já cadastrado na base!";
 	private static final Integer ID   = 1;
 	private static final String NOME  = "Mardonio";
@@ -71,13 +72,13 @@ public class UserServiceImplTest {
 	
 	@Test
 	void quandoBuscarPorIdRetornaExececaoDeNaoEncontrado() {
-		when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+		when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
 		
 		try {
 			service.findById(ID);
 		} catch (Exception e) {
 			assertEquals(ObjectNotFoundException.class, e.getClass());
-			assertEquals("Objeto não encontrado", e.getMessage());
+			assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
 		}
 	}
 	
@@ -156,6 +157,18 @@ public class UserServiceImplTest {
 		service.delete(ID);
 		
 		verify(repository, times(1)).deleteById(anyInt());
+	}
+	
+	@Test
+	void quandoDeletarComErroNaoEncontradoId() {
+		when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+
+		try {
+			service.delete(ID);
+		} catch (Exception e) {
+			assertEquals(ObjectNotFoundException.class, e.getClass());
+			assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
+		}
 	}
 	
 	
