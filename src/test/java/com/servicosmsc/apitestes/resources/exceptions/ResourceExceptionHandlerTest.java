@@ -11,11 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.servicosmsc.apitestes.services.exceptions.DataIntegrityException;
 import com.servicosmsc.apitestes.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
 class ResourceExceptionHandlerTest {
 	
+	private static final String ERRO_DE_VALIDACAO = "Erro de validação";
+
+	private static final String EMAIL_JA_CADASTRADO = "E-mail Já cadastrado";
+
 	private static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
 	
 	@InjectMocks
@@ -43,7 +48,17 @@ class ResourceExceptionHandlerTest {
 
 	@Test
 	void testDataIntegrity() {
-		fail("Not yet implemented");
+		ResponseEntity<StandardError> response = exceptionHandler
+				.dataIntegrity(new DataIntegrityException(EMAIL_JA_CADASTRADO), new MockHttpServletRequest());
+		
+		assertNotNull(response);
+		assertNotNull(response.getBody());
+		
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals(ResponseEntity.class, response.getClass());
+		assertEquals(StandardError.class, response.getBody().getClass());
+		assertEquals(EMAIL_JA_CADASTRADO, response.getBody().getMsg());
+		assertEquals(400, response.getBody().getStatus());
 	}
 
 	@Test
